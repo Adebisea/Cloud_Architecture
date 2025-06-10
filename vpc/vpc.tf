@@ -8,6 +8,15 @@ resource "aws_vpc" "vpc" {
   }
 }
 
+# Internet Gateway
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags   = {
+    Name = "techn_vpc_igw"
+  }
+}
+
 # List availability zones in region
 data "aws_availability_zones" "az_list" {
   state = "available"
