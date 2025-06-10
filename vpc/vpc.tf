@@ -7,3 +7,51 @@ resource "aws_vpc" "vpc" {
     Name = "techn_vpc"
   }
 }
+
+# List availability zones in region
+data "aws_availability_zones" "az_list" {
+  state = "available"
+}
+
+# public subnets
+resource "aws_subnet" "pub1_subnet" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "15.20.25.0/24"
+  availability_zone = data.aws_availability_zones.az_list.names[0]
+
+  tags   = {
+    Name = "techn_vpc_pub1_subnet"
+  }
+}
+
+resource "aws_subnet" "pub2_subnet" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "15.20.30.0/24"
+  availability_zone = data.aws_availability_zones.az_list.names[1]
+
+  tags   = {
+    Name = "techn_vpc_pub2_subnet"
+  }
+}
+
+
+# Private subnets
+resource "aws_subnet" "prv1_subnet" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "15.20.35.0/24"
+  availability_zone = data.aws_availability_zones.az_list.names[0]
+
+  tags   = {
+    Name = "techn_vpc_prv1_subnet"
+  }
+}
+
+resource "aws_subnet" "prv2_subnet" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "15.20.40.0/24"
+  availability_zone = data.aws_availability_zones.az_list.names[1]
+
+  tags   = {
+    Name = "techn_vpc_prv2_subnet"
+  }
+}
