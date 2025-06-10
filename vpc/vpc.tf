@@ -55,3 +55,24 @@ resource "aws_subnet" "prv2_subnet" {
     Name = "techn_vpc_prv2_subnet"
   }
 }
+
+# Nat Gateway
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.eip.id
+  subnet_id     = aws_subnet.pub1_subnet.id
+
+  tags   = {
+    Name = "techn_vpc_nat"
+  }
+
+  depends_on = [aws_internet_gateway.gw]
+}
+
+# Elastic IP 
+resource "aws_eip" "eip" {
+  domain   = "vpc"
+
+    tags   = {
+    Name   = "techn_vpc_eip"
+  }
+}
