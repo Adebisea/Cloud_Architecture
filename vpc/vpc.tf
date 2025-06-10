@@ -76,3 +76,54 @@ resource "aws_eip" "eip" {
     Name   = "techn_vpc_eip"
   }
 }
+
+
+# Public Subnets Route tables
+resource "aws_route_table" "pub_routes" {
+  vpc_id = aws_vpc.vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+
+  tags   = {
+    Name = "techn_vpc_pub_rt"
+  }
+}
+
+# Private Subnets Route tables
+resource "aws_route_table" "prv_routes" {
+  vpc_id = aws_vpc.vpc.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat.id
+  }
+
+  tags   = {
+    Name = "techn_vpc_prv_rt"
+  }
+}
+
+# Associate pub route table with public subnets
+resource "aws_route_table_association" "pub1_subnet_route" {
+  subnet_id      = aws_subnet.pub1_subnet.id
+  route_table_id = aws_route_table.pub_routes.id
+}
+
+resource "aws_route_table_association" "pub2_subnet_route" {
+  subnet_id      = aws_subnet.pub2_subnet.id
+  route_table_id = aws_route_table.pub_routes.id
+}
+
+# Associate prv route table with private subnets
+resource "aws_route_table_association" "prv1_subnet_route" {
+  subnet_id      = aws_subnet.prv1_subnet.id
+  route_table_id = aws_route_table.prv_routes.id
+}
+
+resource "aws_route_table_association" "prv2_subnet_route" {
+  subnet_id      = aws_subnet.prv2_subnet.id
+  route_table_id = aws_route_table.prv_routes.id
+}
