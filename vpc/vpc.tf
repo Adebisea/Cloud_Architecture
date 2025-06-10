@@ -1,6 +1,6 @@
 # VPC Resources
 resource "aws_vpc" "vpc" {
-  cidr_block            = "15.20.0.0/16"
+  cidr_block            = var.vpc_cidr_block
   enable_dns_hostnames  = true
 
   tags   = {
@@ -25,7 +25,7 @@ data "aws_availability_zones" "az_list" {
 # public subnets
 resource "aws_subnet" "pub1_subnet" {
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "15.20.25.0/24"
+  cidr_block        = var.pub1_subnet_cidr_block
   availability_zone = data.aws_availability_zones.az_list.names[0]
 
   tags   = {
@@ -35,7 +35,7 @@ resource "aws_subnet" "pub1_subnet" {
 
 resource "aws_subnet" "pub2_subnet" {
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "15.20.30.0/24"
+  cidr_block        = var.pub2_subnet_cidr_block
   availability_zone = data.aws_availability_zones.az_list.names[1]
 
   tags   = {
@@ -47,7 +47,7 @@ resource "aws_subnet" "pub2_subnet" {
 # Private subnets
 resource "aws_subnet" "prv1_subnet" {
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "15.20.35.0/24"
+  cidr_block        = var.prv1_subnet_cidr_block
   availability_zone = data.aws_availability_zones.az_list.names[0]
 
   tags   = {
@@ -57,7 +57,7 @@ resource "aws_subnet" "prv1_subnet" {
 
 resource "aws_subnet" "prv2_subnet" {
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "15.20.40.0/24"
+  cidr_block        = var.prv2_subnet_cidr_block
   availability_zone = data.aws_availability_zones.az_list.names[1]
 
   tags   = {
