@@ -52,5 +52,38 @@ resource "aws_security_group" "allow_traffic" {
     protocol    = "-1"
     cidr_blocks = [var.dest_cidr_block]
   }
+}
 
+data "aws_ami_ids" "ubuntu" {
+  owners = ["099720109477"]
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/*/ubuntu-*-24.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  sort_ascending = true
+
+}
+
+
+resource "aws_instance" "ec2_techn" {
+  ami                    = data.aws_ami_ids.ubuntu.ids[0]
+  instance_type          = var.instance_type
+  key_name               =  aws_key_pair.prv_key.key_name
+  vpc_security_group_ids = [aws_security_group.allow_traffic.id]
+  subnet_id = var.prv2_subnet_id
+  root_block_device {
+    volume_size = 8
+  }
+
+  tags = {
+    Name = "ec2_techn"
+    Environment = var.environment
+  }
 }
