@@ -1,7 +1,6 @@
 
 variable "vpc_id" {
-    type = list(string
-    )
+    type = string
 }
 
 variable "subnet_ids" {
@@ -11,7 +10,7 @@ variable "subnet_ids" {
 
 variable "final_snapshot_identifier" {
     type = string
-    default = "db_techn_final_snapshot"
+    default = "db-techn-final-snapshot"
 }
 
 variable "ec2_sg" {
@@ -25,4 +24,9 @@ variable "egress_cidr_block" {
 
 variable "environment" {
     type = string
+}
+
+variable "db_username" {
+    type = string
+    default = "postgres"
 }
