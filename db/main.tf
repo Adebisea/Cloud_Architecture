@@ -8,7 +8,7 @@ resource "aws_db_subnet_group" "db_subnet" {
   }
 }
 
-#ec2 security group
+#db security group
 resource "aws_security_group" "db_traffic" {
   name        = "db_traffic"
   description = "Allow inbound traffic from ec2 instances"
@@ -29,16 +29,17 @@ resource "aws_security_group" "db_traffic" {
   }
 }
 
-resource "aws_db_instance" "default" {
+resource "aws_db_instance" "db_techn" {
   allocated_storage             = 100
   db_name                       = "db_techn"
   identifier                    = "techn"
   engine                        = "postgres"
-  engine_version                = "17.4-R1"
+  engine_version                = "17.4"
   instance_class                = "db.m5.large"
   manage_master_user_password   = true
-  username                      = "postgres"
+  username                      = var.db_username
   deletion_protection           = true
+  storage_encrypted             = true
   db_subnet_group_name          = aws_db_subnet_group.db_subnet.id
   backup_retention_period       = 14
   final_snapshot_identifier     = var.final_snapshot_identifier
@@ -49,5 +50,37 @@ resource "aws_db_instance" "default" {
   tags = {
     Name = "db_techn"
     Environment = var.environment
+  }
+}
+
+resource "aws_ssm_parameter" "secret" {
+  name        = "/db/secret_name"
+  type        = "SecureString"
+  value       = aws_db_instance.db_techn.master_user_secret[0].secret_arn
+
+  tags = {
+    environment = var.environment
+  }
+}
+
+resource "aws_ssm_parameter" "host" {
+  name        = "/db/host"
+  description = "The parameter description"
+  type        = "SecureString"
+  value       = aws_db_instance.db_techn.address
+
+  tags = {
+    environment = var.environment
+  }
+}
+
+
+resource "aws_ssm_parameter" "username" {
+  name        = "/db/username"
+  type        = "SecureString"
+  value       = var.db_username
+
+  tags = {
+    environment = var.environment
   }
 }
