@@ -1,5 +1,14 @@
 #aws ALB resources
 
+resource "aws_s3_bucket" "bucket" {
+  bucket = "techn_alb_log_acess"
+
+  tags = {
+    Name        = "techn_bucket"
+    Environment = var.environment
+  }
+}
+
 resource "aws_lb" "alb" {
   name               = "techn-alb"
   internal           = false
@@ -10,7 +19,7 @@ resource "aws_lb" "alb" {
   enable_deletion_protection = true
 
   access_logs {
-    bucket  = ""
+    bucket  = aws_s3_bucket.bucket.name
     prefix  = "techn-alb"
     enabled = true
   }
