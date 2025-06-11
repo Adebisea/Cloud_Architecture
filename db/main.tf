@@ -8,6 +8,26 @@ resource "aws_db_subnet_group" "db_subnet" {
   }
 }
 
+#ec2 security group
+resource "aws_security_group" "db_traffic" {
+  name        = "db_traffic"
+  description = "Allow inbound traffic from ec2 instances"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    security_groups = [var.ec2_sg]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [var.egress_cidr_block]
+  }
+}
 
 resource "aws_db_instance" "default" {
   allocated_storage             = 100

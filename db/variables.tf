@@ -14,12 +14,15 @@ variable "final_snapshot_identifier" {
     default = "db_techn_final_snapshot"
 }
 
-variable "ingress_cidr_block" {
-  type = string
-  default = "15.20.40.0/24"
+variable "ec2_sg" {
+    type = string
 }
 
 variable "egress_cidr_block" {
   type = string
   default = "0.0.0.0/0"
+}
+
+variable "environment" {
+    type = string
 }
