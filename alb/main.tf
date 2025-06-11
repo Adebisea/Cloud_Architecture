@@ -5,13 +5,13 @@ resource "aws_lb" "alb" {
   name               = "techn-alb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.lb_sg.id]
+  security_groups    = [aws_security_group.alb_sg.id]
   subnets            = var.public_subnets_ids
 
   enable_deletion_protection = true
 
   access_logs {
-    bucket  = aws_s3_bucket.bucket.name
+    bucket  = aws_s3_bucket.bucket.id
     prefix  = "techn-alb"
     enabled = true
   }
@@ -46,8 +46,30 @@ resource "aws_lb_target_group_attachment" "alb-tg-attachment" {
   port             = 80
 }
 
+#alb security group
+resource "aws_security_group" "alb_sg" {
+  name        = "techn_sg_alb"
+  description = "Allow inbound traffic from internet and outbound to ec2 instances"
+  vpc_id      = var.vpc_id
+
+    ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [var.ec2_sg]
+    description     = "Forward traffic to instance listener port"
+      }
+    }
+
 resource "aws_s3_bucket" "bucket" {
-  bucket = "techn_alb_log_acess"
+  bucket = "techn-alb-log-acess"
 
   tags = {
     Name        = "techn_bucket"
@@ -56,14 +78,7 @@ resource "aws_s3_bucket" "bucket" {
 }
 
 resource "aws_s3_bucket_policy" "bk_policy" {
-  bucket =aws_s3_bucket.bucket.id
-  policy = data.aws_iam_policy_document.allow_access_from_another_account.json
-}
-
-resource "aws_iam_policy" "policy" {
-  name        = "test_policy"
-  path        = "/"
-  description = "techn bucket policy to allow alb put objects in s3"
+  bucket      =  aws_s3_bucket.bucket.id
   policy      = jsonencode(
                             {
                                 "Version": "2012-10-17",
@@ -75,12 +90,7 @@ resource "aws_iam_policy" "policy" {
                                         "Service": "logdelivery.elasticloadbalancing.amazonaws.com"
                                         },
                                     "Action": "s3:PutObject",
-                                    "Resource": aws_s3_bucket.bucket.arn,
-                                    "Condition": {
-                                        "ArnLike": {
-                                            "aws:SourceArn": aws_lb.alb.arn
-                                        }
-                                    }
+                                    "Resource": "${aws_s3_bucket.bucket.arn}/*"
                                 }
                             ]
                         }
