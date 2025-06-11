@@ -3,14 +3,13 @@ variable "algorithm" {
     default = "RSA"
 }
 
-variable " rsa_bits" {
+variable "rsa_bits" {
   type = string
   default = 4096
 }
 
 variable "environment" {
   type = string
-  default = "Production"
 }
 
 variable "instance_type" {
@@ -18,7 +17,12 @@ variable "instance_type" {
     default = "t2.micro"
 }
 
-variable "dest_cidr_block" {
+variable "ssh_cidr_block" {
+  type = string
+  default = "15.20.0.0/16"
+}
+
+variable "egress_cidr_block" {
   type = string
   default = "0.0.0.0/0"
 }
@@ -29,5 +33,9 @@ variable "vpc_id" {
 
 
 variable "prv2_subnet_id" {
+  type = string
+}
+
+variable "alb_sg" {
   type = string
 }
