@@ -17,40 +17,34 @@ resource "aws_key_pair" "prv_key" {
 #ec2 security group
 resource "aws_security_group" "allow_traffic" {
   name        = "allow_traffic"
-  description = "Allow inbound traffic from the Internet,  and ssh connections"
+  description = "Allow inbound traffic from the ALB, and ssh connections"
   vpc_id      = var.vpc_id
 
   ingress {
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
-    cidr_blocks      = [var.dest_cidr_block]
-  }
-    ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = [var.dest_cidr_block]
+    cidr_blocks      = [var.ssh_cidr_block]
   }
 
   ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = [var.dest_cidr_block]
+    security_groups = [var.alb_sg]
   }
 
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [var.dest_cidr_block]
+    security_groups = [var.alb_sg]
   }
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [var.dest_cidr_block]
+    cidr_blocks = [var.egress_cidr_block]
   }
 }
 
@@ -77,10 +71,10 @@ resource "aws_instance" "ec2_techn" {
   instance_type          = var.instance_type
   key_name               =  aws_key_pair.prv_key.key_name
   vpc_security_group_ids = [aws_security_group.allow_traffic.id]
-  subnet_id = var.prv2_subnet_id
+  subnet_id              = var.prv2_subnet_id
   root_block_device {
-    volume_size = 8
-  }
+            volume_size  = 8
+             }
 
   tags = {
     Name = "ec2_techn"
