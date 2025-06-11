@@ -23,5 +23,8 @@ variable "prv2_subnet_cidr_block" {
   default = "15.20.40.0/24"
 }
 
+variable "environment" {
+  type = string
+}
 
 
