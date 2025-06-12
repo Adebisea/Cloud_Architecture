@@ -35,3 +35,7 @@ variable "vpc_id" {
 variable "prv2_subnet_id" {
   type = string
 }
+
+variable "prefix" {
+    type = string
+}

@@ -12,7 +12,7 @@ resource "aws_key_pair" "prv_key" {
 
 #ec2 security group
 resource "aws_security_group" "allow_traffic" {
-  name        = "allow_traffic"
+  name        = "allow_traffic-${var.prefix}"
   description = "Allow inbound traffic from the ALB, and ssh connections"
   vpc_id      = var.vpc_id
 
@@ -49,7 +49,7 @@ data "aws_ami_ids" "ubuntu" {
 }
 
 resource "aws_iam_role" "ssm_ec2_role" {
-  name = "techn_ssm-ec2-role"
+  name = "techn_ssm-ec2-role--${var.prefix}"
 
   assume_role_policy = jsonencode(
                                     {
@@ -73,7 +73,7 @@ resource "aws_iam_role_policy_attachment" "ssm_ec2_policy" {
 }
 
 resource "aws_iam_instance_profile" "ssm_ec2_profile" {
-  name = "ssm-ec2-profile"
+  name = "ssm-ec2-profile-${var.prefix}"
   role = aws_iam_role.ssm_ec2_role.name
 }
 
@@ -90,7 +90,7 @@ resource "aws_instance" "ec2_techn" {
              }
 
   tags = {
-    Name = "ec2_techn"
+    Name = "ec2_techn-${var.prefix}"
     Environment = var.environment
   }
 

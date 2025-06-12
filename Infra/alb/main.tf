@@ -2,7 +2,7 @@
 
 
 resource "aws_lb" "alb" {
-  name               = "techn-alb"
+  name               = "techn-alb-${var.prefix}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
@@ -10,14 +10,14 @@ resource "aws_lb" "alb" {
 
   enable_deletion_protection = true
 
-  access_logs {
-    bucket  = aws_s3_bucket.bucket.id
-    prefix  = "techn-alb"
-    enabled = true
-  }
+  # access_logs {
+  #   bucket  = aws_s3_bucket.bucket.id
+  #   prefix  = "techn-alb"
+  #   enabled = true
+  # }
 
   tags = {
-    Name = "techn-alb"
+    Name = "techn-alb-${var.prefix}"
     Environment = "production"
   }
 }
@@ -34,7 +34,7 @@ resource "aws_lb_listener" "lb-listener" {
 }
 
 resource "aws_lb_target_group" "lb-tg" {
-  name     = "techn-lb-tg"
+  name     = "techn-lb-tg-${var.prefix}"
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
@@ -48,7 +48,7 @@ resource "aws_lb_target_group_attachment" "alb-tg-attachment" {
 
 #alb security group
 resource "aws_security_group" "alb_sg" {
-  name        = "techn_sg_alb"
+  name        = "techn_sg_alb-${var.prefix}"
   description = "Allow inbound traffic from internet and outbound to ec2 instances"
   vpc_id      = var.vpc_id
 
@@ -69,7 +69,7 @@ resource "aws_security_group" "alb_sg" {
     }
 
 resource "aws_s3_bucket" "bucket" {
-  bucket = "techn-alb-log-acess"
+  bucket = "techn-alb-log-acess-${var.prefix}"
 
   tags = {
     Name        = "techn_bucket"

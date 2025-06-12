@@ -7,6 +7,7 @@ provider "aws" {
 module "vpc" {
   source = "./vpc"
   environment = var.environment
+  prefix = var.prefix
 }
 
 
@@ -15,6 +16,7 @@ module "ec2" {
  vpc_id         = module.vpc.vpc_id
  environment    = var.environment
  prv2_subnet_id = module.vpc.prv2_subnet_id
+ prefix = var.prefix
 
 }
 
@@ -23,6 +25,7 @@ module "db" {
   vpc_id     = module.vpc.vpc_id
   ec2_sg     = module.ec2.ec2_sg
   subnet_ids = [module.vpc.prv1_subnet_id, module.vpc.prv2_subnet_id]
+  prefix = var.prefix
   environment    = var.environment
 }
 
@@ -32,6 +35,7 @@ module "alb" {
   ec2_sg             = module.ec2.ec2_sg
   public_subnets_ids = [module.vpc.pub1_subnet_id, module.vpc.pub2_subnet_id ]
   instance_id        = module.ec2.instance_id
+  prefix = var.prefix
   environment        = var.environment
   
 

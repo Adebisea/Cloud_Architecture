@@ -17,3 +17,7 @@ variable "ec2_sg" {
 variable "public_subnets_ids" {
     type = list(string)
 }
+
+variable "prefix" {
+    type = string
+}

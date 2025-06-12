@@ -4,7 +4,7 @@ resource "aws_vpc" "vpc" {
   enable_dns_hostnames  = true
 
   tags   = {
-    Name = "techn_vpc"
+    Name = "techn_vpc-${var.prefix}"
     Environment = var.environment
   }
 }
@@ -14,7 +14,7 @@ resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.vpc.id
 
   tags   = {
-    Name = "techn_vpc_igw"
+    Name = "techn_vpc_igw-${var.prefix}"
   }
 }
 
@@ -30,7 +30,7 @@ resource "aws_subnet" "pub1_subnet" {
   availability_zone = data.aws_availability_zones.az_list.names[0]
 
   tags   = {
-    Name = "techn_vpc_pub1_subnet"
+    Name = "techn_vpc_pub1_subnet-${var.prefix}"
   }
 }
 
@@ -40,7 +40,7 @@ resource "aws_subnet" "pub2_subnet" {
   availability_zone = data.aws_availability_zones.az_list.names[1]
 
   tags   = {
-    Name = "techn_vpc_pub2_subnet"
+    Name = "techn_vpc_pub2_subnet-${var.prefix}"
   }
 }
 
@@ -52,7 +52,7 @@ resource "aws_subnet" "prv1_subnet" {
   availability_zone = data.aws_availability_zones.az_list.names[0]
 
   tags   = {
-    Name = "techn_vpc_prv1_subnet"
+    Name = "techn_vpc_prv1_subnet-${var.prefix}"
   }
 }
 
@@ -62,7 +62,7 @@ resource "aws_subnet" "prv2_subnet" {
   availability_zone = data.aws_availability_zones.az_list.names[1]
 
   tags   = {
-    Name = "techn_vpc_prv2_subnet"
+    Name = "techn_vpc_prv2_subnet-${var.prefix}"
   }
 }
 
@@ -72,7 +72,7 @@ resource "aws_nat_gateway" "nat" {
   subnet_id     = aws_subnet.pub1_subnet.id
 
   tags   = {
-    Name = "techn_vpc_nat"
+    Name = "techn_vpc_nat-${var.prefix}"
   }
 
   depends_on = [aws_internet_gateway.gw]
@@ -83,7 +83,7 @@ resource "aws_eip" "eip" {
   domain   = "vpc"
 
     tags   = {
-    Name   = "techn_vpc_eip"
+    Name   = "techn_vpc_eip-${var.prefix}"
   }
 }
 
@@ -98,7 +98,7 @@ resource "aws_route_table" "pub_routes" {
   }
 
   tags   = {
-    Name = "techn_vpc_pub_rt"
+    Name = "techn_vpc_pub_rt-${var.prefix}"
   }
 }
 
@@ -112,7 +112,7 @@ resource "aws_route_table" "prv_routes" {
   }
 
   tags   = {
-    Name = "techn_vpc_prv_rt"
+    Name = "techn_vpc_prv_rt-${var.prefix}"
   }
 }
 

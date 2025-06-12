@@ -1,10 +1,11 @@
 
 resource "aws_db_subnet_group" "db_subnet" {
-  name       = "db_techn_subnet_group"
+  name       = "db_techn_subnet_group-${var.prefix}"
   subnet_ids = var.subnet_ids
 
   tags = {
     Name = "db_techn_subnet_group"
+    Environment = var.environment
   }
 }
 
@@ -32,7 +33,7 @@ resource "aws_security_group" "db_traffic" {
 resource "aws_db_instance" "db_techn" {
   allocated_storage             = 100
   db_name                       = "db_techn"
-  identifier                    = "techn"
+  identifier                    = "techn-${var.prefix}"
   engine                        = "postgres"
   engine_version                = "17.4"
   instance_class                = "db.m5.large"
