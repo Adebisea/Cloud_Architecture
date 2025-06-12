@@ -5,9 +5,10 @@ apt install -y python3 python3-pip nginx jq awscli
 # Install Flask and psycopg2
 pip3 install flask psycopg2-binary boto3
 
-# Create app dir
-mkdir -p /opt/app
-
+# Install ssm agent
+sudo snap install amazon-ssm-agent --classic
+sudo snap list amazon-ssm-agent
+sudo snap start amazon-ssm-agent
 
 # nginx config
 echo 'server {
@@ -27,4 +28,8 @@ sudo systemctl reload nginx
 
 
 # run app
+# Create app dir
+mkdir -p /opt/app
+cd /opt/app
+wget https://raw.githubusercontent.com/Adebisea/Cloud_Architecture/refs/heads/IAC/App/app.py
 nohup python3 app.py &
