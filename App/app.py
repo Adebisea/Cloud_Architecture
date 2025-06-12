@@ -18,7 +18,7 @@ db_creds = get_db_creds()
 secret_arn = db_creds['Parameters'][0].Value
 db_host     = db_creds['Parameters'][1].Value
 db_username = db_creds['Parameters'][2].Value
-region_name = "us-west-1"
+region_name = "eu-west-1"
 
 # get db passwd secret value
 def get_secret():
