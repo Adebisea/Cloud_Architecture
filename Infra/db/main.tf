@@ -39,13 +39,16 @@ resource "aws_db_instance" "db_techn" {
   instance_class                = "db.m5.large"
   manage_master_user_password   = true
   username                      = var.db_username
-  deletion_protection           = true
+  deletion_protection           = false
   storage_encrypted             = true
   db_subnet_group_name          = aws_db_subnet_group.db_subnet.id
   backup_retention_period       = 14
   final_snapshot_identifier     = var.final_snapshot_identifier
   backup_window                 = "01:00-02:00"
   maintenance_window            = "Sun:03:00-Sun:04:00"
+  vpc_security_group_ids        = [
+                                    aws_security_group.db_traffic.id
+                                  ]
 
 
   tags = {
