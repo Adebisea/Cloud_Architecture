@@ -1,8 +1,15 @@
 provider "aws" {
   region = "eu-west-1"
-  profile = "IProfile"
+  # profile = "IProfile"
 }
 
+terraform {
+  backend "s3" {
+    bucket = "tf-state-microservices-app-deploy"
+    key    = "prod/terraform.tfstate"
+    region = "eu-west-1"
+  }
+}
 
 module "vpc" {
   source = "./vpc"
@@ -17,6 +24,7 @@ module "ec2" {
  environment    = var.environment
  prv2_subnet_id = module.vpc.prv2_subnet_id
  prefix = var.prefix
+ secret_arn = module.db.secret_arn
 
 }
 
@@ -42,13 +50,13 @@ module "alb" {
 }
 
 
-# Egress rule: allows only EC2 to access RDS
-resource "aws_security_group_rule" "allow_alb_to_ec2" {
-  type                     = "ingress"
-  from_port               = 80
-  to_port                 = 80
-  protocol                = "tcp"
-  source_security_group_id = module.ec2.ec2_sg
-  security_group_id        = module.alb.alb_sg
-}
+# # Egress rule: allows only EC2 to access RDS
+# resource "aws_security_group_rule" "allow_alb_to_ec2" {
+#   type                     = "ingress"
+#   from_port               = 80
+#   to_port                 = 80
+#   protocol                = "tcp"
+#   source_security_group_id = module.ec2.ec2_sg
+#   security_group_id        = module.alb.alb_sg
+# }
 
