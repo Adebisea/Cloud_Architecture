@@ -118,5 +118,4 @@ resource "aws_instance" "ec2_techn" {
     Environment = var.environment
   }
 
-  user_data = file("ec2/user_data.sh")
 }
