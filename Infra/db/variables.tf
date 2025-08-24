@@ -19,7 +19,7 @@ variable "ec2_sg" {
 
 variable "egress_cidr_block" {
   type = string
-  default = "0.0.0.0/0"
+  default = "15.20.0.0/16"
 }
 
 variable "environment" {
