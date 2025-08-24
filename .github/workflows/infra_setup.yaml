@@ -50,7 +50,7 @@ jobs:
               echo "Creating S3 bucket if it doesn't exist..."
               set -e
 
-              OUTPUT=$(aws s3api create-bucket --bucket tf-state-microservices-app-deploy --create-bucket-configuration LocationConstraint=${{ env.REGION }} 2>&1) && exit 0
+              OUTPUT=$(aws s3api create-bucket --bucket tf-state-microservices-app-deploy --create-bucket-configuration LocationConstraint=${{ secrets.REGION }} 2>&1) && exit 0
 
               if echo "$OUTPUT" | grep -q 'BucketAlreadyOwnedByYou'; then
                 echo "Bucket already exists in this account — continuing."
