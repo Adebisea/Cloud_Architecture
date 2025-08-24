@@ -8,13 +8,12 @@ resource "aws_lb" "alb" {
   security_groups    = [aws_security_group.alb_sg.id]
   subnets            = var.public_subnets_ids
 
-  enable_deletion_protection = true
-
-  # access_logs {
-  #   bucket  = aws_s3_bucket.bucket.id
-  #   prefix  = "techn-alb"
-  #   enabled = true
-  # }
+  enable_deletion_protection = false
+  access_logs {
+    bucket  = aws_s3_bucket.bucket.id
+    prefix  = "techn-alb"
+    enabled = true
+  }
 
   tags = {
     Name = "techn-alb-${var.prefix}"
