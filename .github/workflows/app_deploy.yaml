@@ -1,0 +1,85 @@
+name: App deployment CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'App/**'
+      - '.github/workflows/app_deploy.yaml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/app_deploy.yaml'
+      - 'App/**'
+  workflow_dispatch: 
+
+
+jobs:
+  install_dependencies:
+    name: install App dependencies
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: App
+    steps:
+
+    - name: checkout code from repo
+      uses: actions/checkout@v4
+      with:
+        sparse-checkout: App
+
+    - name: Install python, nginx and jq
+      run: |
+        apt update
+        sudo apt install -y python3 
+        sudo apt install -y python3-pip
+        sudo apt install -y python3-venv
+        sudo apt install -y nginx jq
+
+    - name: create virtual environment
+      run: |
+        python3 -m venv venv
+        source venv/bin/activate
+
+    - name:  Install Flask and psycopg2
+      run: |
+        pip install flask 
+        pip install psycopg2-binary
+
+    - name: Install Boto3
+      run: pip install boto3
+
+    - name:  Install ssm agent
+      run: |
+        sudo snap install amazon-ssm-agent --classic
+        sudo snap list amazon-ssm-agent
+        sudo snap start amazon-ssm-agent
+
+  configure nginx:
+    name: configure nginx 
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: App
+
+    steps:
+
+    - name: checkout code from repo
+      uses: actions/checkout@v4
+      with:
+        sparse-checkout: App
+        
+    - name: move config file 
+      run: |
+        sudo mv nginx.config /etc/nginx/sites-available/
+        sudo ln -s /etc/nginx/sites-available/flask_app /etc/nginx/sites-enabled/
+        sudo rm /etc/nginx/sites-enabled/default
+
+    - name: reload_nginx 
+      run: sudo systemctl reload nginx
+
+
+
+      
