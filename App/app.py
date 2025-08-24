@@ -1,24 +1,24 @@
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template
 import psycopg2
 import boto3
 from botocore.exceptions import ClientError
 import json
 
-app = Flask(__name__)
-
+app = Flask(__name__, static_url_path='/static')
+region_name = "eu-west-1"
 # Fetch DB credentials
 def get_db_creds():
-    ssm_client = boto3.client('ssm')
+    ssm_client = boto3.client('ssm', region_name=region_name)
     db_creds = ssm_client.get_parameters(
-            Names=["/db/secret_name", "/db/host", "/db/username" ], WithDecryption=True
+            Names=["/db/secret_name", "/db/host" ], WithDecryption=True
         )
     return db_creds
 
 db_creds = get_db_creds()
-secret_arn = db_creds['Parameters'][0].Value
-db_host     = db_creds['Parameters'][1].Value
-db_username = db_creds['Parameters'][2].Value
-region_name = "eu-west-1"
+db_creds = {creds['Name']:creds['Value'] for creds in db_creds['Parameters']}
+secret_arn = db_creds["/db/secret_name"]
+db_host     = db_creds["/db/host"]
+
 
 # get db passwd secret value
 def get_secret():
@@ -42,10 +42,11 @@ def get_secret():
 
 def create_conn():
     secret = get_secret()
+    secret = json.loads(secret)
     conn = psycopg2.connect(
         dbname= "db_techn",
-        user= db_username,
-        password= secret,
+        user= secret['username'],
+        password= secret['password'],
         host= db_host,
         port=5432
     )
@@ -57,24 +58,19 @@ def create_table_users():
     cur.execute("CREATE TABLE IF NOT EXISTS users (name TEXT)")
     conn.commit()
 
-form_html = '''
-<form method="POST" action="/submit">
-  <label>Hello, welcome! What's your name?</label><br>
-  <input name="name" required>
-  <button type="submit">Submit</button>
-</form>
-'''
+create_table_users()
 
+# Rendering the homepage 
 @app.route("/", methods=["GET"])
 def home():
-    return render_template_string(form_html)
+    return render_template('index.html')
 
 @app.route("/submit", methods=["POST"])
 def submit():
     name = request.form["name"]
     cur.execute("INSERT INTO users (name) VALUES (%s)", (name,))
     conn.commit()
-    return f"Glad to meet you, {name}"
+    return render_template('result.html', name=name)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0",debug=False, port=5000)
