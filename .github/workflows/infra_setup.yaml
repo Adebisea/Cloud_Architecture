@@ -3,13 +3,13 @@ name: Infra Setup CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - IAC
     paths:
       - 'infra/**'
       - '.github/workflows/infra_setup.yaml'
   pull_request:
     branches:
-      - main
+      - IAC
     paths:
       - '.github/workflows/infra_setup.yaml'
       - 'infra/**'

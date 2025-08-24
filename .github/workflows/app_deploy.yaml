@@ -3,13 +3,13 @@ name: App deployment CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - IAC
     paths:
       - 'App/**'
       - '.github/workflows/app_deploy.yaml'
   pull_request:
     branches:
-      - main
+      - IAC
     paths:
       - '.github/workflows/app_deploy.yaml'
       - 'App/**'
@@ -70,11 +70,11 @@ jobs:
       uses: actions/checkout@v4
       with:
         sparse-checkout: App
-        
+
     - name: move config file 
       run: |
         sudo mv nginx.config /etc/nginx/sites-available/
-        sudo ln -s /etc/nginx/sites-available/flask_app /etc/nginx/sites-enabled/
+        sudo ln -s /etc/nginx/sites-available/nginx.config /etc/nginx/sites-enabled/
         sudo rm /etc/nginx/sites-enabled/default
 
     - name: reload_nginx 
