@@ -1,0 +1,12 @@
+<html>
+      <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+      </head>
+      <body>
+        <form method="POST" action="/submit">
+          <label>Hello, welcome! What's your name?</label>
+          <input name="name" required>
+          <button type="submit">Submit</button>
+        </form>
+      </body>
+    </html>
