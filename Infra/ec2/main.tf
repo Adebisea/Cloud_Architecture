@@ -48,9 +48,9 @@ data "aws_ami_ids" "ubuntu" {
 
 }
 
-resource "aws_iam_role" "ssm_ec2_role" {
-  name = "techn_ssm-ec2-role--${var.prefix}"
-
+resource "aws_iam_role" "ec2_role" {
+  name = "techn_ec2-role--${var.prefix}"
+  description = "iam role for ec2 access to ssm and secretmanager"
   assume_role_policy = jsonencode(
                                     {
                                       Version = "2012-10-17",
@@ -68,23 +68,47 @@ resource "aws_iam_role" "ssm_ec2_role" {
                                 }
 
 resource "aws_iam_role_policy_attachment" "ssm_ec2_policy" {
-  role       = aws_iam_role.ssm_ec2_role.name
+  role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-resource "aws_iam_instance_profile" "ssm_ec2_profile" {
-  name = "ssm-ec2-profile-${var.prefix}"
-  role = aws_iam_role.ssm_ec2_role.name
+#policy for ec2 to access Secrets Manager
+resource "aws_iam_policy" "secrets_access" {
+  name = "techn_secrets_access-${var.prefix}"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ],
+        Resource = var.secret_arn
+      }
+    ]
+  })
 }
 
+resource "aws_iam_role_policy_attachment" "attach_secrets_policy" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = aws_iam_policy.secrets_access.arn
+}
 
+# iam_instance_profile
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "ec2-profile-${var.prefix}"
+  role = aws_iam_role.ec2_role.name
+}
+
+# ec2 instance
 resource "aws_instance" "ec2_techn" {
   ami                    = data.aws_ami_ids.ubuntu.ids[0]
   instance_type          = var.instance_type
   key_name               =  aws_key_pair.prv_key.key_name
   vpc_security_group_ids = [aws_security_group.allow_traffic.id]
   subnet_id              = var.prv2_subnet_id
-  iam_instance_profile  = aws_iam_instance_profile.ssm_ec2_profile.name
+  iam_instance_profile  = aws_iam_instance_profile.ec2_profile.name
   root_block_device {
             volume_size  = 8
              }
