@@ -50,7 +50,7 @@ jobs:
 
     - name: Zip App folder
       run: |
-        zip -r app.zip App
+        zip -r app.zip .
 
     - name: Upload app.zip to S3
       run: |
