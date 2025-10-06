@@ -1,0 +1,33 @@
+---
+- name: Install dependencies
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Install python, nginx and jq
+    shell: |
+      apt update
+      sudo apt install -y python3 
+      sudo apt install -y python3-pip
+      sudo apt install -y python3-venv
+      sudo apt install -y nginx jq
+
+  - name: create virtual environment
+    shell: |
+      python3 -m venv venv
+      source venv/bin/activate
+
+  - name:  Install Flask and psycopg2
+    shell: |
+      pip install flask 
+      pip install psycopg2-binary
+
+  - name: Install Boto3
+    shell: pip install boto3
+
+  - name:  Install ssm agent
+    shell: |
+      sudo snap install amazon-ssm-agent --classic
+      sudo snap list amazon-ssm-agent
+      sudo snap start amazon-ssm-agent
+
