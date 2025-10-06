@@ -55,7 +55,12 @@ jobs:
     - name: Upload app.zip to S3
       run: |
         aws s3 cp app.zip s3://technn-deployment-bucket/app.zip
-      
+
+    - name: Install Ansible dynamic inventory dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install boto3 botocore ansible amazon.aws
+
     - name: Run app_dependencies playbook
       env:
         ANSIBLE_USER: ubuntu
@@ -73,6 +78,11 @@ jobs:
     - name: checkout code from repo
       uses: actions/checkout@v4
 
+    - name: Install Ansible dynamic inventory dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install boto3 botocore ansible amazon.aws
+        
     - name: Run app_deploy playbook
       env:
         ANSIBLE_USER: ubuntu
