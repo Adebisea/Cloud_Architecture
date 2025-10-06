@@ -44,9 +44,9 @@ jobs:
     - name: configure aws credentials
       uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
       with:
-        role-to-assume: ROLE-TO-ASSUME
-        role-session-name: samplerolesession
-        aws-region: ${{ secrets.AWS_REGION }}
+        role-to-assume: ${{ secrets.EC2_GH_ROLE }}
+        role-session-name: ghrolesession
+        aws-region: ${{ secrets.REGION }}
 
     - name: Zip App folder
       run: |
