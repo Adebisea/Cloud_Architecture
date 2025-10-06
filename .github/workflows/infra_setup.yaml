@@ -5,14 +5,14 @@ on:
     branches:
       - IAC
     paths:
-      - 'infra/**'
+      - 'Infra/**'
       - '.github/workflows/infra_setup.yaml'
   pull_request:
     branches:
       - IAC
     paths:
       - '.github/workflows/infra_setup.yaml'
-      - 'infra/**'
+      - 'Infra/**'
   workflow_dispatch: 
 
 permissions:
