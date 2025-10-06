@@ -46,7 +46,7 @@ jobs:
       with:
         role-to-assume: ROLE-TO-ASSUME
         role-session-name: samplerolesession
-        aws-region: ${{ secret.AWS_REGION }}
+        aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Zip App folder
       run: |
