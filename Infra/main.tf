@@ -68,6 +68,31 @@ module "github-oidc" {
                                    "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
                               ]
 }
+
+resource "aws_iam_role_policy" "github_oidc_s3_policy" {
+  name = "github-s3-access"
+  role = module.github-oidc.oidc_role 
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "arn:aws:s3:::technn-deployment-bucket",
+          "arn:aws:s3:::technn-deployment-bucket/*"
+        ]
+      }
+    ]
+  })
+}
+
 # # Egress rule: allows only EC2 to access RDS
 # resource "aws_security_group_rule" "allow_alb_to_ec2" {
 #   type                     = "ingress"
