@@ -1,0 +1,49 @@
+---
+- name: Deploy app via SSM
+  hosts: all
+  gather_facts: no
+  connection: local       
+
+
+  vars:
+    region: eu-west-1
+    bucket_name: technn-deployment-bucket
+    ssm_targets:
+      - Key: "InstanceIds"
+        Values: ["{{ inventory_hostname }}"]
+
+  tasks:
+
+    - name: Run SSM command to download and extract app
+      community.aws.aws_ssm:
+        region: "{{ region }}"
+        document_name: AWS-RunShellScript
+        targets: "{{ ssm_targets }}"
+        command:
+          - "aws s3 cp s3://{{ bucket_name }}/app.zip /tmp/app.zip"
+          - "sudo mkdir -p /var/www/app"
+          - "sudo unzip -o /tmp/app.zip -d /var/www/app"
+          - "sudo rm -f /tmp/app.zip"
+
+    - name: Move nginx config file
+      community.aws.aws_ssm:
+        region: "{{ region }}"
+        document_name: AWS-RunShellScript
+        targets: "{{ ssm_targets }}"
+        command:
+          - "sudo mv /var/www/app/nginx.conf /etc/nginx/sites-available/myapp.conf"
+          - "sudo ln -sf /etc/nginx/sites-available/myapp.conf /etc/nginx/sites-enabled/myapp.conf"
+          - "sudo rm -f /etc/nginx/sites-enabled/default"
+          - "sudo systemctl reload nginx"
+          
+
+    - name: Start app
+      community.aws.aws_ssm:
+        region: "{{ region }}"
+        document_name: AWS-RunShellScript
+        targets: "{{ ssm_targets }}"
+        command:
+          - sudo mkdir -p /var/log/myapp
+          - sudo chown ubuntu:ubuntu /var/log/myapp
+          - "cd /var/www/app"
+          - "nohup python3 app.py > /var/log/myapp/app.log 2>&1 &"
