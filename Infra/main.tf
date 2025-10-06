@@ -1,6 +1,5 @@
 provider "aws" {
   region = "eu-west-1"
-  # profile = "IProfile"
 }
 
 terraform {
@@ -48,8 +47,27 @@ module "alb" {
   
 
 }
+resource "aws_s3_bucket" "example" {
+  bucket = "technn-deployment-bucket"
 
+  tags = {
+    Environment = var.environment
+  }
+}
 
+module "github-oidc" {
+  source  = "terraform-module/github-oidc-provider/aws"
+  version = "~> 2"
+
+  create_oidc_provider = true
+  create_oidc_role     = true
+
+  repositories              = ["Adebisea/Cloud_Architecture"]
+  oidc_role_attach_policies = [    
+                                   "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore", 
+                                   "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
+                              ]
+}
 # # Egress rule: allows only EC2 to access RDS
 # resource "aws_security_group_rule" "allow_alb_to_ec2" {
 #   type                     = "ingress"
