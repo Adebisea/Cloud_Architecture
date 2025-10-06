@@ -61,15 +61,12 @@ jobs:
         ANSIBLE_USER: ubuntu
         ANSIBLE_HOST_KEY_CHECKING: False
       run: |
-        ansible-playbook -i ansible/app_deploy.aws_ec2.yaml ansible/app_dependencies.yaml -u ubuntu -e "ansible_connection=community.aws.ssm"
+        ansible-playbook -i ../ansible/app_deploy.aws_ec2.yaml ../ansible/app_dependencies.yaml -u ubuntu -e "ansible_connection=community.aws.ssm"
   
   deploy:
 
     name: deploy app
     runs-on: ubuntu-24.04
-    defaults:
-      run:
-        working-directory: App
     needs: install_dependencies
     steps:
 
