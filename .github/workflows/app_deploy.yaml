@@ -59,7 +59,10 @@ jobs:
     - name: Install Ansible dynamic inventory dependencies
       run: |
         python3 -m pip install --upgrade pip
-        pip install boto3 botocore ansible amazon.aws
+        pip install boto3 botocore
+
+    - name: Install Ansible AWS collection
+      run: ansible-galaxy collection install amazon.aws
 
     - name: Run app_dependencies playbook
       env:
@@ -81,8 +84,11 @@ jobs:
     - name: Install Ansible dynamic inventory dependencies
       run: |
         python3 -m pip install --upgrade pip
-        pip install boto3 botocore ansible amazon.aws
-        
+        pip install boto3 botocore ansible 
+
+    - name: Install Ansible AWS collection
+      run: ansible-galaxy collection install amazon.aws
+      
     - name: Run app_deploy playbook
       env:
         ANSIBLE_USER: ubuntu
