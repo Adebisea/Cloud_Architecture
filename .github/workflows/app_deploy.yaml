@@ -70,8 +70,12 @@ jobs:
     defaults:
       run:
         working-directory: App
-        
+    needs: install_dependencies
     steps:
+
+    - name: checkout code from repo
+      uses: actions/checkout@v4
+
     - name: Run app_deploy playbook
       env:
         ANSIBLE_USER: ubuntu
