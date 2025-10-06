@@ -1,0 +1,10 @@
+plugin: amazon.aws.aws_ec2
+regions:
+  - eu-west-1
+
+filters:
+  tag:Name: "ec2_techn-*" 
+
+compose:
+  # This sets the `ansible_host` variable to connect with the private IP address without changing the hostname.
+  ansible_host: public_ip_address
