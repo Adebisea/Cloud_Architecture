@@ -72,7 +72,7 @@ module "github-oidc" {
 resource "aws_iam_role_policy" "github_oidc_s3_policy" {
   name = "github-s3-access"
   role = "github-oidc-provider-aws"
-
+  depends_on = [module.github-oidc]
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
