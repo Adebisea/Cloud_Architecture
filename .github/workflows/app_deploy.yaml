@@ -58,7 +58,10 @@ jobs:
         ansible --version
 
     - name: Install Ansible AWS collection
-      run: ansible-galaxy collection install amazon.aws 
+      run: |
+        ansible-galaxy collection install amazon.aws 
+        ansible-galaxy collection list
+
 
     - name: Run app_dependencies playbook
       env:
@@ -85,7 +88,10 @@ jobs:
         ansible --version
 
     - name: Install Ansible AWS collection
-      run: ansible-galaxy collection install amazon.aws
+      run: |
+        ansible-galaxy collection install amazon.aws
+        ansible-galaxy collection list 
+
 
     - name: Run app_deploy playbook
       env:
