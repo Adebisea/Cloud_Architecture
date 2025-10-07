@@ -36,11 +36,6 @@ jobs:
       with:
         python-version: '3.9'
 
-    - name: Install Ansible
-      run: |
-        sudo apt update
-        sudo apt install -y ansible
-
     - name: configure aws credentials
       uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
       with:
@@ -59,7 +54,8 @@ jobs:
     - name: Install Ansible dynamic inventory dependencies
       run: |
         python3 -m pip install --upgrade pip
-        pip install boto3 botocore
+        pip install boto3 botocore ansible
+        ansible --version
 
     - name: Install Ansible AWS collection
       run: ansible-galaxy collection install amazon.aws
@@ -68,6 +64,7 @@ jobs:
       env:
         ANSIBLE_USER: ubuntu
         ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_INVENTORY_ENABLED: amazon.aws.aws_ec2,ini,yaml
       run: |
         ansible-playbook -i ../ansible/app_deploy.aws_ec2.yaml ../ansible/app_dependencies.yaml -u ubuntu -e "ansible_connection=community.aws.ssm"
   
@@ -85,14 +82,16 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip
         pip install boto3 botocore ansible 
+        ansible --version
 
     - name: Install Ansible AWS collection
       run: ansible-galaxy collection install amazon.aws
-      
+
     - name: Run app_deploy playbook
       env:
         ANSIBLE_USER: ubuntu
         ANSIBLE_HOST_KEY_CHECKING: False
+        ANSIBLE_INVENTORY_ENABLED: amazon.aws.aws_ec2,ini,yaml
       run: |
         ansible-playbook -i ansible/app_deploy.aws_ec2.yaml ansible/app_deploy.yaml -u ubuntu -e "ansible_connection=community.aws.ssm"
 
