@@ -59,7 +59,7 @@ jobs:
 
     - name: Install Ansible AWS collection
       run: |
-        ansible-galaxy collection install amazon.aws 
+        ansible-galaxy collection install amazon.aws:>=7.0.0 --force
         ansible-galaxy collection list
 
 
@@ -89,7 +89,7 @@ jobs:
 
     - name: Install Ansible AWS collection
       run: |
-        ansible-galaxy collection install amazon.aws
+        ansible-galaxy collection install amazon.aws:>=7.0.0 --force
         ansible-galaxy collection list 
 
 
