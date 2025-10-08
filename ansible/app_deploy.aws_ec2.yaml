@@ -13,5 +13,5 @@ hostnames:
   - tag:Name  
 compose:
   ansible_host: instance_id 
-  ansible_connection: "amazon.aws.aws_ssm"
-  ansible_aws_ssm_region: "eu-west-1"
+  ansible_connection: "'amazon.aws.aws_ssm'"
+  ansible_aws_ssm_region: "'eu-west-1'"
