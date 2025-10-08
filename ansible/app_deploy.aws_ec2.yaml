@@ -8,8 +8,8 @@ filters:
 keyed_groups:
   - key: tags.Name
     prefix: "tag"
-    
+
 hostnames:
   - tag:Name  
 compose:
-  ansible_host: instance_id   
+  ansible_host: "{{ instance_id | string }}"  
