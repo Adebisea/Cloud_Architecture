@@ -7,6 +7,8 @@ on:
     paths:
       - 'App/**'
       - '.github/workflows/app_deploy.yaml'
+      - 'ansible/**'
+
   pull_request:
     branches:
       - IAC
