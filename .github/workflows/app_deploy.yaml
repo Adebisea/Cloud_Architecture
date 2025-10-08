@@ -70,7 +70,7 @@ jobs:
         ANSIBLE_INVENTORY_ENABLED: amazon.aws.aws_ec2,ini,yaml
       run: |
         ansible-inventory -i ansible/app_deploy.aws_ec2.yaml --graph
-        ansible-doc -t connection amazon.aws.aws_ssm
+        ansible-inventory -i ansible/app_deploy.aws_ec2.yaml --list
 
         ansible-playbook -i ../ansible/app_deploy.aws_ec2.yaml ../ansible/app_dependencies.yaml -u ubuntu -e "ansible_connection=amazon.aws.aws_ssm"
   
