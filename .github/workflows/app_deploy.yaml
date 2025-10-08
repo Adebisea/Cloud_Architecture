@@ -64,15 +64,16 @@ jobs:
 
 
     - name: Run app_dependencies playbook
+      working-directory: ansible
       env:
         ANSIBLE_USER: ubuntu
         ANSIBLE_HOST_KEY_CHECKING: False
         ANSIBLE_INVENTORY_ENABLED: amazon.aws.aws_ec2,ini,yaml
       run: |
-        ansible-inventory -i ansible/app_deploy.aws_ec2.yaml --graph
-        ansible-inventory -i ansible/app_deploy.aws_ec2.yaml --list
+        ansible-inventory -i app_deploy.aws_ec2.yaml --graph
+        ansible-inventory -i app_deploy.aws_ec2.yaml --list
 
-        ansible-playbook -i ../ansible/app_deploy.aws_ec2.yaml ../ansible/app_dependencies.yaml -u ubuntu -e "ansible_connection=amazon.aws.aws_ssm"
+        ansible-playbook -i app_deploy.aws_ec2.yaml app_dependencies.yaml -u ubuntu -e "ansible_connection=amazon.aws.aws_ssm"
   
   deploy:
 
@@ -97,12 +98,13 @@ jobs:
 
 
     - name: Run app_deploy playbook
+      working-directory: ansible
       env:
         ANSIBLE_USER: ubuntu
         ANSIBLE_HOST_KEY_CHECKING: False
         ANSIBLE_INVENTORY_ENABLED: amazon.aws.aws_ec2,ini,yaml
       run: |
-        ansible-playbook -i ansible/app_deploy.aws_ec2.yaml ansible/app_deploy.yaml -u ubuntu -e "ansible_connection=amazon.aws.aws_ssm"
+        ansible-playbook -i app_deploy.aws_ec2.yaml app_deploy.yaml -u ubuntu -e "ansible_connection=amazon.aws.aws_ssm"
 
     - name: Delete app.zip from S3
       run: |
