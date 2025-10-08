@@ -12,4 +12,6 @@ filters:
 hostnames:
   - tag:Name  
 compose:
-  ansible_host: "{{ instance_id | string }}"  
+  ansible_host: instance_id 
+  ansible_connection: aws_ssm
+  ansible_aws_ssm_region: eu-west-1
