@@ -5,6 +5,7 @@ regions:
 filters:
   tag:Name: "ec2_techn-*" 
 
+hostnames:
+  - tag:Name  
 compose:
-  # This sets the `ansible_host` variable to connect with the private IP address without changing the hostname.
-  ansible_host: public_ip_address
+  ansible_host: instance_id   
