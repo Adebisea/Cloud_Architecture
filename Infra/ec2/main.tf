@@ -112,7 +112,12 @@ resource "aws_instance" "ec2_techn" {
   root_block_device {
             volume_size  = 8
              }
-
+  user_data = <<-EOF
+        #!/bin/bash
+        sudo snap install amazon-ssm-agent --classic
+        sudo snap list amazon-ssm-agent
+        sudo snap start amazon-ssm-agent
+      EOF
   tags = {
     Name = "ec2_techn-${var.prefix}"
     Environment = var.environment
