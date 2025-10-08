@@ -73,22 +73,22 @@ resource "aws_iam_role_policy_attachment" "ssm_ec2_policy" {
 }
 
 #policy for ec2 to access Secrets Manager
-resource "aws_iam_policy" "secrets_access" {
-  name = "techn_secrets_access-${var.prefix}"
+# resource "aws_iam_policy" "secrets_access" {
+#   name = "techn_secrets_access-${var.prefix}"
 
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = [
-          "secretsmanager:GetSecretValue"
-        ],
-        Resource = var.secret_arn
-      }
-    ]
-  })
-}
+#   policy = jsonencode({
+#     Version = "2012-10-17",
+#     Statement = [
+#       {
+#         Effect = "Allow",
+#         Action = [
+#           "secretsmanager:GetSecretValue"
+#         ],
+#         Resource = var.secret_arn
+#       }
+#     ]
+#   })
+# }
 
 resource "aws_iam_role_policy_attachment" "attach_secrets_policy" {
   role       = aws_iam_role.ec2_role.name
