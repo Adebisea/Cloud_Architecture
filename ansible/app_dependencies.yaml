@@ -25,9 +25,9 @@
   - name: Install Boto3
     shell: pip install boto3
 
-  - name:  Install ssm agent
-    shell: |
-      sudo snap install amazon-ssm-agent --classic
-      sudo snap list amazon-ssm-agent
-      sudo snap start amazon-ssm-agent
+  # - name:  Install ssm agent
+  #   shell: |
+  #     sudo snap install amazon-ssm-agent --classic
+  #     sudo snap list amazon-ssm-agent
+  #     sudo snap start amazon-ssm-agent
 
