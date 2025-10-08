@@ -104,7 +104,7 @@ jobs:
         ANSIBLE_HOST_KEY_CHECKING: False
         ANSIBLE_INVENTORY_ENABLED: amazon.aws.aws_ec2,ini,yaml
       run: |
-        ansible-playbook -i app_deploy.aws_ec2.yaml app_deploy.yaml -u ubuntu -e "ansible_connection=amazon.aws.aws_ssm"
+        ansible-playbook -i app_deploy.aws_ec2.yaml app_deploy.yaml -u ubuntu -e "ansible_connection=amazon.aws.aws_ssm" -vvv
 
     - name: Delete app.zip from S3
       run: |
