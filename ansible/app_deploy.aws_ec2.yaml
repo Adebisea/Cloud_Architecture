@@ -5,6 +5,10 @@ regions:
 filters:
   tag:Name: "ec2_techn-*" 
 
+keyed_groups:
+  - key: tags.Name
+    prefix: "tag"
+    
 hostnames:
   - tag:Name  
 compose:
