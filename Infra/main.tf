@@ -23,7 +23,7 @@ module "ec2" {
  environment    = var.environment
  prv2_subnet_id = module.vpc.prv2_subnet_id
  prefix = var.prefix
- secret_arn = module.db.secret_arn
+#  secret_arn = module.db.secret_arn
 
 }
 
