@@ -73,7 +73,7 @@ jobs:
         ANSIBLE_INVENTORY_ENABLED: amazon.aws.aws_ec2,ini,yaml
       run: |
         ansible-inventory -i app_deploy.aws_ec2.yaml --host ec2_techn-webserver
-        ansible -i app_deploy.aws_ec2.yaml ec2_techn-webserver -m ping
+        # ansible -i app_deploy.aws_ec2.yaml ec2_techn-webserver -m ping
 
 
         ansible-playbook -i app_deploy.aws_ec2.yaml app_dependencies.yaml

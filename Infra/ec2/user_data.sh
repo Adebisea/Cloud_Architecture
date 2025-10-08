@@ -1,10 +1,18 @@
 #!/bin/bash
 apt update
-apt install -y python3 python3-pip nginx jq awscli
+sudo apt install -y python3 
+sudo apt install -y python3-pip
+sudo apt install -y python3-venv
+sudo apt install -y nginx jq
+
+# Create venv
+python3 -m venv venv
+source venv/bin/activate
 
 # Install Flask and psycopg2
-pip3 install flask psycopg2-binary boto3
-
+pip install flask 
+pip install psycopg2-binary 
+pip install boto3
 # Install ssm agent
 sudo snap install amazon-ssm-agent --classic
 sudo snap list amazon-ssm-agent
@@ -28,8 +36,6 @@ sudo systemctl reload nginx
 
 
 # run app
-# Create app dir
-mkdir -p /opt/app
-cd /opt/app
+cd ~
 wget https://raw.githubusercontent.com/Adebisea/Cloud_Architecture/refs/heads/IAC/App/app.py
 nohup python3 app.py &
