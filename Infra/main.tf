@@ -27,26 +27,26 @@ module "ec2" {
 
 }
 
-module "db" {
-  source     = "./db"
-  vpc_id     = module.vpc.vpc_id
-  ec2_sg     = module.ec2.ec2_sg
-  subnet_ids = [module.vpc.prv1_subnet_id, module.vpc.prv2_subnet_id]
-  prefix = var.prefix
-  environment    = var.environment
-}
+# module "db" {
+#   source     = "./db"
+#   vpc_id     = module.vpc.vpc_id
+#   ec2_sg     = module.ec2.ec2_sg
+#   subnet_ids = [module.vpc.prv1_subnet_id, module.vpc.prv2_subnet_id]
+#   prefix = var.prefix
+#   environment    = var.environment
+# }
 
-module "alb" {
-  source             = "./alb"
-  vpc_id             = module.vpc.vpc_id
-  ec2_sg             = module.ec2.ec2_sg
-  public_subnets_ids = [module.vpc.pub1_subnet_id, module.vpc.pub2_subnet_id ]
-  instance_id        = module.ec2.instance_id
-  prefix = var.prefix
-  environment        = var.environment
+# module "alb" {
+#   source             = "./alb"
+#   vpc_id             = module.vpc.vpc_id
+#   ec2_sg             = module.ec2.ec2_sg
+#   public_subnets_ids = [module.vpc.pub1_subnet_id, module.vpc.pub2_subnet_id ]
+#   instance_id        = module.ec2.instance_id
+#   prefix = var.prefix
+#   environment        = var.environment
   
 
-}
+# }
 resource "aws_s3_bucket" "example" {
   bucket = "technn-deployment-bucket"
 
