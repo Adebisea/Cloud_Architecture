@@ -4,6 +4,11 @@
   become: yes
   gather_facts: no
 
+  vars:
+    ansible_connection: aws_ssm
+    ansible_aws_ssm_bucket_name: technn-deployment-bucket
+    ansible_aws_ssm_region: eu-west-1
+    
   tasks:
   - name: Install python, nginx and jq
     shell: |
