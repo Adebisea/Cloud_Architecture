@@ -64,8 +64,9 @@ module "github-oidc" {
 
   repositories              = ["Adebisea/Cloud_Architecture"]
   oidc_role_attach_policies = [    
-                                   "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore", 
-                                   "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
+                                   
+                                   "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess",
+                                   "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
                               ]
 }
 
