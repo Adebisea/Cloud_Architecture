@@ -6,38 +6,37 @@
 
   vars:
     ansible_connection: aws_ssm
-    ansible_aws_ssm_bucket_name: technn-deployment-bucket
     ansible_aws_ssm_region: eu-west-1
-
-    ansible_become: yes
-    ansible_become_method: sudo
-    ansible_become_user: root
+    ansible_aws_ssm_bucket_name: technn-deployment-bucket
+    venv_path: /opt/technn-venv
 
   tasks:
-  - name: Install python, nginx and jq
-    shell: |
-      apt update
-      sudo apt install -y python3 
-      sudo apt install -y python3-pip
-      sudo apt install -y python3-venv
-      sudo apt install -y nginx jq
+    - name: Update apt cache
+      apt:
+        update_cache: yes
 
-  - name: create virtual environment
-    shell: |
-      python3 -m venv venv
-      source venv/bin/activate
+    - name: Install system packages
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-venv
+          - nginx
+          - jq
+        state: present
 
-  - name:  Install Flask and psycopg2
-    shell: |
-      pip install flask 
-      pip install psycopg2-binary
+    - name: Create Python virtual environment
+      command: python3 -m venv {{ venv_path }}
+      args:
+        creates: "{{ venv_path }}/bin/activate"
 
-  - name: Install Boto3
-    shell: pip install boto3
+    - name: Install Python dependencies into venv
+      pip:
+        name:
+          - flask
+          - psycopg2-binary
+          - boto3
+        virtualenv: "{{ venv_path }}"
+        virtualenv_command: python3 -m venv
 
-  # - name:  Install ssm agent
-  #   shell: |
-  #     sudo snap install amazon-ssm-agent --classic
-  #     sudo snap list amazon-ssm-agent
-  #     sudo snap start amazon-ssm-agent
 
