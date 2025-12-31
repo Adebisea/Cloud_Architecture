@@ -63,10 +63,8 @@ module "github-oidc" {
   create_oidc_role     = true
 
   repositories              = ["Adebisea/Cloud_Architecture"]
-  oidc_role_attach_policies = [    
-                                   "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore", 
-                                   "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess",
-                                   
+  oidc_role_attach_policies = [     
+                                   "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"                                 
                               ]
 }
 
@@ -90,6 +88,16 @@ resource "aws_iam_role_policy" "github_oidc_s3_policy" {
           "arn:aws:s3:::technn-deployment-bucket",
           "arn:aws:s3:::technn-deployment-bucket/*"
         ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:StartSession",
+          "ssm:DescribeSessions",
+          "ssm:GetConnectionStatus",
+          "ssm:TerminateSession"
+        ]
+        Resource = "*"
       }
     ]
   })
