@@ -113,7 +113,6 @@ resource "aws_iam_role_policy_attachment" "attach_secrets_policy" {
 #policy for ec2 to access S3
 resource "aws_iam_policy" "ec2_s3_policy" {
   name = "ec2-s3-access"
-  role = aws_iam_role.ec2_role.name
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
