@@ -56,7 +56,7 @@ jobs:
     - name: Install Ansible dynamic inventory dependencies
       run: |
         python3 -m pip install --upgrade pip
-        pip install "boto3" "botocore" "ansible" "awscli"
+        pip install "boto3" "botocore" "ansible"
         ansible --version
     
     - name: Install Ansible AWS collection
