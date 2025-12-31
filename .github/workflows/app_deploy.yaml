@@ -78,7 +78,7 @@ jobs:
         ANSIBLE_INVENTORY_ENABLED: amazon.aws.aws_ec2,ini,yaml
       run: |
         ansible-playbook -i app_deploy.aws_ec2.yaml app_dependencies.yaml -vvv
-        
+
   deploy:
 
     name: deploy app
@@ -92,7 +92,7 @@ jobs:
     - name: Install Ansible dynamic inventory dependencies
       run: |
         python3 -m pip install --upgrade pip
-        pip install "boto3" "botocore" "ansible"
+        pip install "boto3" "botocore" "ansible" "awscli"
         ansible --version
 
     - name: Install Ansible AWS collection
