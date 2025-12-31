@@ -10,6 +10,7 @@ resource "aws_key_pair" "prv_key" {
   public_key = tls_private_key.tls_prv_key.public_key_openssh 
 }
 
+
 #ec2 security group
 resource "aws_security_group" "allow_traffic" {
   name        = "allow_traffic-${var.prefix}"
@@ -23,6 +24,19 @@ resource "aws_security_group" "allow_traffic" {
     cidr_blocks      = [var.ssh_cidr_block]
   }
 
+  ingress {
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = [var.ssh_cidr_block]
+  }
+
+  ingress {
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = [var.ssh_cidr_block]
+  }
   egress {
     from_port   = 0
     to_port     = 0
@@ -72,28 +86,57 @@ resource "aws_iam_role_policy_attachment" "ssm_ec2_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-#policy for ec2 to access Secrets Manager
-# resource "aws_iam_policy" "secrets_access" {
-#   name = "techn_secrets_access-${var.prefix}"
+# policy for ec2 to access Secrets Manager
+resource "aws_iam_policy" "secrets_access" {
+  name = "techn_secrets_access-${var.prefix}"
 
-#   policy = jsonencode({
-#     Version = "2012-10-17",
-#     Statement = [
-#       {
-#         Effect = "Allow",
-#         Action = [
-#           "secretsmanager:GetSecretValue"
-#         ],
-#         Resource = var.secret_arn
-#       }
-#     ]
-#   })
-# }
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ],
+        Resource = var.secret_arn
+      }
+    ]
+  })
+}
 
-# resource "aws_iam_role_policy_attachment" "attach_secrets_policy" {
-#   role       = aws_iam_role.ec2_role.name
-#   policy_arn = aws_iam_policy.secrets_access.arn
-# }
+resource "aws_iam_role_policy_attachment" "attach_secrets_policy" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = aws_iam_policy.secrets_access.arn
+}
+
+
+#policy for ec2 to access S3
+resource "aws_iam_role_policy" "ec2_s3_policy" {
+  name = "ec2-s3-access"
+  role = aws_iam_role.ec2_role.name
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = [
+          "s3:GetObject",
+          "s3:DeleteObject",
+          "s3:ListBucket",
+          "s3:GetBucketLocation"
+        ]
+        Resource = [
+          "arn:aws:s3:::technn-deployment-bucket",
+          "arn:aws:s3:::technn-deployment-bucket/*"
+        ]
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "attach_secrets_policy" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = aws_iam_policy.ec2_s3_policy.arn
+}
 
 # iam_instance_profile
 resource "aws_iam_instance_profile" "ec2_profile" {
@@ -112,12 +155,8 @@ resource "aws_instance" "ec2_techn" {
   root_block_device {
             volume_size  = 8
              }
-  user_data = <<-EOF
-        #!/bin/bash
-        sudo snap install amazon-ssm-agent --classic
-        sudo snap list amazon-ssm-agent
-        sudo snap start amazon-ssm-agent
-      EOF
+  user_data = file("user_data.sh")
+
   tags = {
     Name = "ec2_techn-${var.prefix}"
     Environment = var.environment
