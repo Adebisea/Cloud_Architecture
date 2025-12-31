@@ -77,13 +77,8 @@ jobs:
         ANSIBLE_HOST_KEY_CHECKING: False
         ANSIBLE_INVENTORY_ENABLED: amazon.aws.aws_ec2,ini,yaml
       run: |
-        aws ssm describe-instance-information     --filters "Key=InstanceIds,Values=i-01a74af4af95f7120"     --region eu-west-1     --query "InstanceInformationList[0].PingStatus"     --output text
-
-        # ansible-inventory -i app_deploy.aws_ec2.yaml --host ec2_techn-webserver
-        ansible -i app_deploy.aws_ec2.yaml ec2_techn-webserver -m ping -vvv
-
-
         ansible-playbook -i app_deploy.aws_ec2.yaml app_dependencies.yaml -vvv
+        
   deploy:
 
     name: deploy app
