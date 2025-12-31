@@ -1,49 +1,92 @@
+
 ---
 - name: Deploy app via SSM
   hosts: all
   gather_facts: no
-  connection: local       
-
+  become: yes
 
   vars:
-    region: eu-west-1
-    bucket_name: technn-deployment-bucket
-    ssm_targets:
-      - Key: "InstanceIds"
-        Values: ["{{ inventory_hostname }}"]
+    ansible_connection: aws_ssm
+    ansible_aws_ssm_region: eu-west-1
+    ansible_aws_ssm_bucket_name: technn-deployment-bucket
+
+    app_dir: /var/www/app
+    log_dir: /var/log/myapp
 
   tasks:
+    - name: Ensure app directory exists
+      file:
+        path: "{{ app_dir }}"
+        state: directory
 
-    - name: Run SSM command to download and extract app
-      community.aws.aws_ssm:
-        region: "{{ region }}"
-        document_name: AWS-RunShellScript
-        targets: "{{ ssm_targets }}"
-        command:
-          - "aws s3 cp s3://{{ bucket_name }}/app.zip /tmp/app.zip"
-          - "sudo mkdir -p /var/www/app"
-          - "sudo unzip -o /tmp/app.zip -d /var/www/app"
-          - "sudo rm -f /tmp/app.zip"
+    - name: Download app artifact
+      amazon.aws.s3_object:
+        bucket: technn-deployment-bucket
+        object: app.zip
+        dest: "{{ app_dir }}/app.zip"
+        mode: get
 
-    - name: Move nginx config file
-      community.aws.aws_ssm:
-        region: "{{ region }}"
-        document_name: AWS-RunShellScript
-        targets: "{{ ssm_targets }}"
-        command:
-          - "sudo mv /var/www/app/nginx.conf /etc/nginx/sites-available/myapp.conf"
-          - "sudo ln -sf /etc/nginx/sites-available/myapp.conf /etc/nginx/sites-enabled/myapp.conf"
-          - "sudo rm -f /etc/nginx/sites-enabled/default"
-          - "sudo systemctl reload nginx"
-          
+    - name: Extract app
+      unarchive:
+        src: "{{ app_dir }}/app.zip"
+        dest: "{{ app_dir }}"
+        remote_src: yes
 
-    - name: Start app
-      community.aws.aws_ssm:
-        region: "{{ region }}"
-        document_name: AWS-RunShellScript
-        targets: "{{ ssm_targets }}"
-        command:
-          - sudo mkdir -p /var/log/myapp
-          - sudo chown ubuntu:ubuntu /var/log/myapp
-          - "cd /var/www/app"
-          - "nohup python3 app.py > /var/log/myapp/app.log 2>&1 &"
+    - name: Remove zip
+      file:
+        path: "{{ app_dir }}/app.zip"
+        state: absent
+
+    - name: Install nginx config
+      copy:
+        src: "{{ app_dir }}/nginx.conf"
+        dest: /etc/nginx/sites-available/myapp.conf
+
+    - name: Enable nginx site
+      file:
+        src: /etc/nginx/sites-available/myapp.conf
+        dest: /etc/nginx/sites-enabled/myapp.conf
+        state: link
+        force: yes
+
+    - name: Reload nginx
+      systemd:
+        name: nginx
+        state: reloaded
+
+    - name: Ensure log directory exists
+      file:
+        path: "{{ log_dir }}"
+        state: directory
+
+    - name: Create systemd service for Flask app
+      copy:
+        dest: /etc/systemd/system/myapp.service
+        content: |
+          [Unit]
+          Description=My Flask App
+          After=network.target
+
+          [Service]
+          User=ubuntu
+          WorkingDirectory={{ app_dir }}
+          ExecStart=/usr/bin/python3 {{ app_dir }}/app.py
+          Restart=always
+          StandardOutput=append:{{ log_dir }}/app_output.log
+          StandardError=append:{{ log_dir }}/app_error.log
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start myapp service
+      systemd:
+        name: myapp
+        enabled: yes
+        state: started
+
+        
+
