@@ -133,7 +133,7 @@ resource "aws_iam_role_policy" "ec2_s3_policy" {
     ]
   })
 }
-resource "aws_iam_role_policy_attachment" "attach_secrets_policy" {
+resource "aws_iam_role_policy_attachment" "attach_s3_policy" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = aws_iam_policy.ec2_s3_policy.arn
 }
