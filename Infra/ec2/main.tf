@@ -155,7 +155,7 @@ resource "aws_instance" "ec2_techn" {
   root_block_device {
             volume_size  = 8
              }
-  user_data = file("user_data.sh")
+  user_data = file("ec2/user_data.sh")
 
   tags = {
     Name = "ec2_techn-${var.prefix}"
