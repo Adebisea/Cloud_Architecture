@@ -18,6 +18,8 @@
       file:
         path: "{{ app_dir }}"
         state: directory
+        owner: ubuntu
+        group: ubuntu
 
     - name: Download app artifact
       amazon.aws.s3_object:
@@ -25,6 +27,11 @@
         object: app.zip
         dest: "{{ app_dir }}/app.zip"
         mode: get
+
+    - name: Install unzip
+      package:
+        name: unzip
+        state: present
 
     - name: Extract app
       unarchive:
@@ -37,10 +44,11 @@
         path: "{{ app_dir }}/app.zip"
         state: absent
 
-    - name: Install nginx config
+    - name: move nginx config
       copy:
-        src: "{{ app_dir }}/nginx.conf"
+        src: "{{ app_dir }}/nginx.config"
         dest: /etc/nginx/sites-available/myapp.conf
+        remote_src: yes
 
     - name: Enable nginx site
       file:
@@ -70,10 +78,10 @@
           [Service]
           User=ubuntu
           WorkingDirectory={{ app_dir }}
-          ExecStart=/usr/bin/python3 {{ app_dir }}/app.py
+          ExecStart=/opt/technn-venv/bin/python {{ app_dir }}/app.py
           Restart=always
-          StandardOutput=append:{{ log_dir }}/app_output.log
-          StandardError=append:{{ log_dir }}/app_error.log
+          StandardOutput=file:{{ log_dir }}/app_output.log
+          StandardError=file:{{ log_dir }}/app_error.log
 
           [Install]
           WantedBy=multi-user.target
