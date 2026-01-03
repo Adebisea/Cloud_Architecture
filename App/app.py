@@ -4,7 +4,7 @@ import boto3
 from botocore.exceptions import ClientError
 import json
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__, static_url_path='/static', template_folder='static')
 region_name = "eu-west-1"
 # Fetch DB credentials
 def get_db_creds():
