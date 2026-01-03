@@ -45,14 +45,6 @@ jobs:
         role-session-name: ghrolesession
         aws-region: ${{ secrets.REGION }}
 
-    - name: Zip App folder
-      run: |
-        zip -r app.zip .
-
-    - name: Upload app.zip to S3
-      run: |
-        aws s3 cp app.zip s3://technn-deployment-bucket/app.zip
-
     - name: Install Ansible dynamic inventory dependencies
       run: |
         python3 -m pip install --upgrade pip
@@ -89,6 +81,26 @@ jobs:
     - name: checkout code from repo
       uses: actions/checkout@v4
 
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+      with:
+        role-to-assume: ${{ secrets.EC2_GH_ROLE }}
+        role-session-name: ghrolesession
+        aws-region: ${{ secrets.REGION }}
+
+    - name: Zip App folder
+      run: |
+        zip -r app.zip .
+
+    - name: Upload app.zip to S3
+      run: |
+        aws s3 cp app.zip s3://technn-deployment-bucket/app.zip
+        
     - name: Install Ansible dynamic inventory dependencies
       run: |
         python3 -m pip install --upgrade pip
