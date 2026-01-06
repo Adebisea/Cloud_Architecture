@@ -159,6 +159,7 @@ EC2_GH_ROLE
 ```
 http://<alb-dns-name>
 ```
+![Alt Text](https://github.com/Adebisea/Cloud_Architecture/blob/IAC/Images/flask_app_ui.jpeg?raw=true)
 
 ---
 
