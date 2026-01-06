@@ -159,7 +159,8 @@ EC2_GH_ROLE
 ```
 http://<alb-dns-name>
 ```
-![Alt Text](https://github.com/Adebisea/Cloud_Architecture/blob/IAC/Images/flask_app_ui.jpeg?raw=true)
+![Flask App UI](https://raw.githubusercontent.com/Adebisea/Cloud_Architecture/IAC/Images/flask_app_ui.jpeg)
+
 
 ---
 
@@ -174,3 +175,4 @@ http://<alb-dns-name>
 ---
 
 Built as a hands-on DevOps project to demonstrate cloud infrastructure design, automation, security best practices, and CI/CD workflows.
+
