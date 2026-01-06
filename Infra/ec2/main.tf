@@ -1,16 +1,4 @@
 
-
-resource "tls_private_key" "tls_prv_key" {
-  algorithm = var.algorithm
-  rsa_bits  = var.rsa_bits
-}
-
-resource "aws_key_pair" "prv_key" {
-  key_name   = "techn_prvkey"
-  public_key = tls_private_key.tls_prv_key.public_key_openssh 
-}
-
-
 #ec2 security group
 resource "aws_security_group" "allow_traffic" {
   name        = "allow_traffic-${var.prefix}"
@@ -21,21 +9,21 @@ resource "aws_security_group" "allow_traffic" {
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
-    cidr_blocks      = [var.ssh_cidr_block]
+    cidr_blocks      = [var.vpc_cidr_block]
   }
 
   ingress {
     from_port        = 80
     to_port          = 80
     protocol         = "tcp"
-    cidr_blocks      = [var.ssh_cidr_block]
+    cidr_blocks      = [var.vpc_cidr_block]
   }
 
   ingress {
     from_port        = 443
     to_port          = 443
     protocol         = "tcp"
-    cidr_blocks      = [var.ssh_cidr_block]
+    cidr_blocks      = [var.vpc_cidr_block]
   }
   egress {
     from_port   = 0
@@ -147,7 +135,6 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 resource "aws_instance" "ec2_techn" {
   ami                    = data.aws_ami_ids.ubuntu.ids[0]
   instance_type          = var.instance_type
-  key_name               =  aws_key_pair.prv_key.key_name
   vpc_security_group_ids = [aws_security_group.allow_traffic.id]
   subnet_id              = var.prv2_subnet_id
   iam_instance_profile  = aws_iam_instance_profile.ec2_profile.name
