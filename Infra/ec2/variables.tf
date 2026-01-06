@@ -1,13 +1,3 @@
-variable "algorithm" {
-    type    = string
-    default = "RSA"
-}
-
-variable "rsa_bits" {
-  type = string
-  default = 4096
-}
-
 variable "environment" {
   type = string
 }
@@ -17,7 +7,7 @@ variable "instance_type" {
     default = "t2.micro"
 }
 
-variable "ssh_cidr_block" {
+variable "vpc_cidr_block" {
   type = string
   default = "15.20.0.0/16"
 }
