@@ -103,13 +103,5 @@ resource "aws_iam_role_policy" "github_oidc_s3_policy" {
   })
 }
 
-# # Egress rule: allows only EC2 to access RDS
-# resource "aws_security_group_rule" "allow_alb_to_ec2" {
-#   type                     = "ingress"
-#   from_port               = 80
-#   to_port                 = 80
-#   protocol                = "tcp"
-#   source_security_group_id = module.ec2.ec2_sg
-#   security_group_id        = module.alb.alb_sg
-# }
+
 
