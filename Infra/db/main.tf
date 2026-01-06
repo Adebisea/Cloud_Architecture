@@ -78,13 +78,3 @@ resource "aws_ssm_parameter" "host" {
   }
 }
 
-
-resource "aws_ssm_parameter" "username" {
-  name        = "/db/username"
-  type        = "SecureString"
-  value       = var.db_username
-
-  tags = {
-    environment = var.environment
-  }
-}
